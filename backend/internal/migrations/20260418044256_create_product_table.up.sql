@@ -12,5 +12,9 @@ CREATE TABLE products (
                           CONSTRAINT fk_products_category
                               FOREIGN KEY (category_id)
                                   REFERENCES categories(id)
+                                  ON DELETE CASCADE,
+                          CONSTRAINT fk_products_user
+                              FOREIGN KEY (user_id)
+                                  REFERENCES users(id)
                                   ON DELETE CASCADE
 );

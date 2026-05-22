@@ -1,21 +1,20 @@
 import React, { useState } from 'react';
-import { updateUser } from '../api';
-
+import { updateUser, deleteUser } from '../api';
 export default function ProfilePage({ user, setUser, setPage }) {
   const [name, setName] = useState(user ? user.name : '');
   const [email, setEmail] = useState(user ? user.email : '');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
-
+  const [deleting, setDeleting] = useState(false);
   if (!user) {
     return (
-      <div style={page}>
-        <div style={center}>
-          <p>Please sign in to view profile.</p>
-          <button style={btn} onClick={() => setPage('login')}>Sign In</button>
+        <div style={page}>
+          <div style={center}>
+            <p>Please sign in to view profile.</p>
+            <button style={btn} onClick={() => setPage('login')}>Sign In</button>
+          </div>
         </div>
-      </div>
     );
   }
 
@@ -46,52 +45,69 @@ export default function ProfilePage({ user, setUser, setPage }) {
     setSuccess('Profile updated successfully');
   }
 
+  async function handleDelete() {
+    if (!window.confirm('Are you sure you want to delete your account?')) return;
+    setDeleting(true);
+    const res = await deleteUser(user.id);
+    setDeleting(false);
+    if (res.error) {
+      setError(res.error);
+      return;
+    }
+    localStorage.removeItem('token');
+    setUser(null);
+    setPage('home');
+  }
+
   return (
-    <div style={page}>
-      <div style={card}>
+      <div style={page}>
+        <div style={card}>
 
-        <h1 style={title}>My Profile</h1>
+          <h1 style={title}>My Profile</h1>
 
-        <div style={avatar}>
-          {user.name ? user.name[0].toUpperCase() : 'U'}
-        </div>
+          <div style={avatar}>
+            {user.name ? user.name[0].toUpperCase() : 'U'}
+          </div>
 
-        {error && <div style={errorBox}>{error}</div>}
-        {success && <div style={successBox}>{success}</div>}
+          {error && <div style={errorBox}>{error}</div>}
+          {success && <div style={successBox}>{success}</div>}
 
-        <div style={group}>
-          <label style={label}>Full Name</label>
-          <input
-            style={input}
-            value={name}
-            onChange={e => setName(e.target.value)}
-          />
-        </div>
+          <div style={group}>
+            <label style={label}>Full Name</label>
+            <input
+                style={input}
+                value={name}
+                onChange={e => setName(e.target.value)}
+            />
+          </div>
 
-        <div style={group}>
-          <label style={label}>Email</label>
-          <input
-            style={input}
-            type="email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-          />
-        </div>
+          <div style={group}>
+            <label style={label}>Email</label>
+            <input
+                style={input}
+                type="email"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+            />
+          </div>
 
-        <div style={actions}>
-          <button style={saveBtn} onClick={handleSave} disabled={loading}>
-            {loading ? 'Saving...' : 'Save Changes'}
+          <div style={actions}>
+            <button style={saveBtn} onClick={handleSave} disabled={loading}>
+              {loading ? 'Saving...' : 'Save Changes'}
+            </button>
+            <button style={myListingsBtn} onClick={() => setPage('my-listings')}>
+              My Listings
+            </button>
+          </div>
+
+          <button style={deleteAccountBtn} onClick={handleDelete} disabled={deleting}>
+            {deleting ? 'Deleting...' : 'Delete Account'}
           </button>
-          <button style={myListingsBtn} onClick={() => setPage('my-listings')}>
-            My Listings
-          </button>
-        </div>
 
+        </div>
       </div>
-    </div>
   );
 }
-
 const page = {
   minHeight: '100vh',
   background: '#f9fafb',
@@ -171,25 +187,6 @@ const input = {
   boxSizing: 'border-box',
 };
 
-const infoRow = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  padding: '10px 0',
-  borderTop: '1px solid #f3f4f6',
-  marginBottom: 20,
-};
-
-const infoLabel = {
-  fontSize: 13,
-  color: '#9ca3af',
-};
-
-const infoValue = {
-  fontSize: 13,
-  color: '#374151',
-  fontWeight: 500,
-};
-
 const actions = {
   display: 'flex',
   gap: 10,
@@ -235,4 +232,17 @@ const center = {
   textAlign: 'center',
   padding: 60,
   color: '#9ca3af',
+};
+
+const deleteAccountBtn = {
+  width: '100%',
+  background: '#fef2f2',
+  color: '#ef4444',
+  border: '1px solid #fecaca',
+  padding: 11,
+  borderRadius: 7,
+  fontSize: 14,
+  fontWeight: 600,
+  cursor: 'pointer',
+  marginTop: 10,
 };
