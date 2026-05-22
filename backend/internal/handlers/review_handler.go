@@ -45,6 +45,13 @@ func CreateReview(c *gin.Context) {
 
 func GetProductReviews(c *gin.Context) {
 	productID := c.Param("id")
+
+	var product models.Product
+	if err := database.DB.First(&product, productID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Product not found"})
+		return
+	}
+
 	var reviews []models.Review
 	database.DB.Where("product_id = ?", productID).Order("created_at DESC").Find(&reviews)
 
