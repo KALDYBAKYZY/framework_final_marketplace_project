@@ -54,8 +54,6 @@ func SetupRoutes(r *gin.Engine) {
 		auth.PUT("/orders/:id/status", handlers.UpdateOrderStatus)
 
 		auth.POST("/reviews", handlers.CreateReview)
-		auth.PUT("/reviews/:id", handlers.UpdateReview)
-		auth.DELETE("/reviews/:id", handlers.DeleteReview)
 		auth.GET("/reviews/my", handlers.GetMyReviews)
 
 	}

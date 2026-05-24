@@ -42,7 +42,6 @@ func Register(c *gin.Context) {
 	}
 
 	go notification.SendRegisterEvent(user.ID, user.Name, user.Email)
-
 	c.JSON(http.StatusCreated, gin.H{"message": "User registered successfully"})
 }
 

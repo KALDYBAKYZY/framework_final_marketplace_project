@@ -65,58 +65,6 @@ func GetProductReviews(c *gin.Context) {
 	})
 }
 
-func UpdateReview(c *gin.Context) {
-	uid := getUserIDFromContext(c)
-
-	var review models.Review
-	if err := database.DB.First(&review, c.Param("id")).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Review not found"})
-		return
-	}
-
-	if review.UserID != uid {
-		c.JSON(http.StatusForbidden, gin.H{"error": "You can only edit your own reviews"})
-		return
-	}
-
-	var input struct {
-		Rating  int    `json:"rating"`
-		Comment string `json:"comment"`
-	}
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	if input.Rating < 1 || input.Rating > 5 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Rating must be between 1 and 5"})
-		return
-	}
-
-	review.Rating = input.Rating
-	review.Comment = input.Comment
-	database.DB.Save(&review)
-	c.JSON(http.StatusOK, review)
-}
-
-func DeleteReview(c *gin.Context) {
-	uid := getUserIDFromContext(c)
-
-	var review models.Review
-	if err := database.DB.First(&review, c.Param("id")).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Review not found"})
-		return
-	}
-
-	if review.UserID != uid {
-		c.JSON(http.StatusForbidden, gin.H{"error": "You can only delete your own reviews"})
-		return
-	}
-
-	database.DB.Delete(&review)
-	c.JSON(http.StatusOK, gin.H{"message": "Review deleted"})
-}
-
 func GetMyReviews(c *gin.Context) {
 	uid := getUserIDFromContext(c)
 	var reviews []models.Review

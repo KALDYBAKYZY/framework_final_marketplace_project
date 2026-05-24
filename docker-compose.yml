@@ -30,7 +30,7 @@ services:
       DB_PORT: 5432
       NOTIFICATION_SERVICE_URL: http://notification-service:8082
     volumes:
-      - uploads_data:/app/uploads
+      - ./uploads:/app/uploads
 
   notification-service:
     build: ./notification-service
@@ -46,4 +46,3 @@ services:
 
 volumes:
   postgres_data:
-  uploads_data:

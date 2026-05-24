@@ -124,9 +124,3 @@ func UpdateOrderStatus(c *gin.Context) {
 	database.DB.Model(&order).Update("status", input.Status)
 	c.JSON(http.StatusOK, order)
 }
-
-func GetAllOrders(c *gin.Context) {
-	var orders []models.Order
-	database.DB.Preload("Items").Order("created_at DESC").Find(&orders)
-	c.JSON(http.StatusOK, orders)
-}
