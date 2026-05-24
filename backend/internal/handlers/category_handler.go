@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"backend/internal/category"
 	"backend/internal/database"
 	"backend/internal/models"
 	"net/http"
@@ -21,7 +20,6 @@ func CreateCategory(c *gin.Context) {
 		return
 	}
 	database.DB.Create(&cat)
-	go category.NotifyNewCategory(cat.Name)
 	c.JSON(http.StatusCreated, cat)
 }
 
