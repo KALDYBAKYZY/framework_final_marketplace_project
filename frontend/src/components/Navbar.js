@@ -111,12 +111,6 @@ const activeBtn = {
   background: '#eff6ff',
 };
 
-const adminBtn = {
-  ...btn,
-  color: '#92400e',
-  background: '#fef3c7',
-};
-
 const actions = {
   display: 'flex',
   alignItems: 'center',
