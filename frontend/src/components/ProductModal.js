@@ -20,7 +20,18 @@ export default function ProductModal({ product, categoryName, isOwner, onClose, 
     }
   }, [product]);
 
-  if (!product) return null;
+  useEffect(() => {
+    setRating(5);
+    setComment('');
+    setReviewMsg('');
+    setOrdering(false);
+    setQty(1);
+    setOrderMsg('');
+  }, [product]);
+
+  if (!product) {
+    return null;
+  }
 
   async function submitReview() {
     const res = await createReview(product.id, rating, comment);

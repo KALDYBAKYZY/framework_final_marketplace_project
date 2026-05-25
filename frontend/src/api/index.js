@@ -50,10 +50,6 @@ export function getProducts(filters) {
   return req('/products' + qs);
 }
 
-export function getProduct(id) {
-  return req('/products/' + id);
-}
-
 export function createProduct(data) {
   return req('/products', { method: 'POST', body: JSON.stringify(data) });
 }
@@ -90,8 +86,8 @@ export function getMyOrders() {
   return req('/orders/my');
 }
 
-export function getOrderByID(id) {
-  return req('/orders/' + id);
+export function deleteOrder(id) {
+  return req('/orders/' + id, { method: 'DELETE' });
 }
 
 export function updateOrderStatus(id, status) {

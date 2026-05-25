@@ -124,3 +124,17 @@ func UpdateOrderStatus(c *gin.Context) {
 	database.DB.Model(&order).Update("status", input.Status)
 	c.JSON(http.StatusOK, order)
 }
+
+func DeleteOrder(c *gin.Context) {
+	var order models.Order
+	if err := database.DB.First(&order, c.Param("id")).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Order not found"})
+		return
+	}
+	if order.UserID != getUserIDFromContext(c) {
+		c.JSON(http.StatusForbidden, gin.H{"error": "Not your order"})
+		return
+	}
+	database.DB.Delete(&order)
+	c.JSON(http.StatusOK, gin.H{"message": "Order cancelled"})
+}

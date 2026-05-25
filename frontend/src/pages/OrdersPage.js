@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getMyOrders, updateOrderStatus } from '../api';
+import { getMyOrders, updateOrderStatus, deleteOrder } from '../api';
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState([]);
@@ -16,6 +16,13 @@ export default function OrdersPage() {
     const res = await updateOrderStatus(orderId, 'paid');
     if (res.error) { alert(res.error); return; }
     setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: 'paid' } : o));
+  }
+
+  async function handleDelete(orderId) {
+    if (!window.confirm('Cancel this order?')) return;
+    const res = await deleteOrder(orderId);
+    if (res.error) { alert(res.error); return; }
+    setOrders(prev => prev.filter(o => o.id !== orderId));
   }
 
   function statusColor(status) {
@@ -73,11 +80,18 @@ export default function OrdersPage() {
                     <span style={totalLabel}>Total</span>
                     <span style={totalPrice}>₸{order.total_price.toLocaleString()}</span>
                   </div>
-                  {order.status === 'pending' && (
-                      <button style={payBtn} onClick={() => handlePay(order.id)}>
-                        ✓ Confirm Payment
-                      </button>
-                  )}
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    {order.status === 'pending' && (
+                        <button style={payBtn} onClick={() => handlePay(order.id)}>
+                          ✓ Confirm Payment
+                        </button>
+                    )}
+                    {order.status === 'pending' && (
+                        <button style={deleteBtn} onClick={() => handleDelete(order.id)}>
+                          Cancel
+                        </button>
+                    )}
+                  </div>
                 </div>
               </div>
           ))}
@@ -203,6 +217,16 @@ const totalPrice = {
 const payBtn = {
   background: '#ec4899',
   color: 'white',
+  border: 'none',
+  padding: '8px 18px',
+  borderRadius: 7,
+  fontSize: 13,
+  fontWeight: 600,
+  cursor: 'pointer'
+};
+const deleteBtn = {
+  background: '#fef2f2',
+  color: '#ef4444',
   border: 'none',
   padding: '8px 18px',
   borderRadius: 7,
